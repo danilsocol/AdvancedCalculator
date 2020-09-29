@@ -9,7 +9,7 @@ namespace labs3
         private static void Main()
         
         {
-            Console.WriteLine("Привет,это программа выводит табличку с х и значением функции y=x^2.");
+            Console.WriteLine("Привет,это программа выводит табличку с х и значением функции y=x^2. \nВведите диапазон значений x, начиная с наименьшего ");
             int From = Convert.ToInt32(Console.ReadLine());
             int Before = Convert.ToInt32(Console.ReadLine());
             if (From> Before)
