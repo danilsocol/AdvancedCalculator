@@ -1,62 +1,87 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
-namespace labs3
+namespace labs7
 {
-     class Program
-     {
-        private static void Main()
-
+    class Program
+    {
+        static void Main(string[] args)
         {
             Console.WriteLine("Привет,это программа выводит табличку со значением функции y=x^2. \nВведите диапазон значений x, начиная с наименьшего ");
-            string r = Console.ReadLine();
+            int minRange = Convert.ToInt32(Console.ReadLine());
 
             Console.WriteLine("Теперь наибольшое");
-            double Before = Convert.ToInt32(Console.ReadLine());
+            int maxRange = Convert.ToInt32(Console.ReadLine());
 
-            
-
-            string ch = Convert.ToString((r + Before));
-            int chs = ch.Length;
-            int f = 0;
-
-            double From = Convert.ToInt32(r);
-                           
-            if (From > Before)
+            if (minRange > maxRange)
             {
                 Console.WriteLine("неправильно введен диапазон ");
                 return;
             }
+            int spaceNeed = FindSpaceMaxRange(maxRange);
 
-            for (double num = From; num <= Before; num++)
+            Read(spaceNeed, minRange, maxRange);
+        }
+
+        static int FindSpaceMaxRange(double maxRange)
+        {
+            string maxRandeFormula = $" {Convert.ToString(Math.Round(maxRange * maxRange, 0))} ";
+            return maxRandeFormula.Length;
+        }
+
+        static void Read(int spaceNeed, int minRange, int maxRange)
+        {
+            ReadTable('|', '-', spaceNeed);
+            ReadTable('|', "x", "y", spaceNeed);
+
+            for (int i = minRange; i <= maxRange; i++)
             {
-                double squ = num * num;
-
-                int chX = num.ToString().Length;
-                int whiteSpaceX = (chs - chX);
-                string spX = "".PadRight(whiteSpaceX);
-
-                int chY = squ.ToString().Length;
-                int whiteSpaceY = (chs - chY);
-                string spY = "".PadRight(whiteSpaceY);
-
-
-                string line = "|" + num + "|" + squ + "|";
-                int str = line.Length + whiteSpaceY + whiteSpaceX;
-
-                if (f == 0)
-                {
-                    Console.WriteLine("|{0}x{0}|{0}y{0}|", spX);
-                    Console.WriteLine("".PadRight(str, '-'));
-                    f = 1;
-                }
-                if (num <= Before) 
-                {
-                    Console.WriteLine("|{0}{1}|{2}{3}|", num, spX, squ, spY);
-                    Console.WriteLine("".PadRight(str, '-'));
-                }
-          
+                ReadTable('|', '-', spaceNeed);
+                ReadTable('|', $"{i}", $"{i * i}", spaceNeed);
             }
 
         }
-     }
+
+        static string FindSpace(string num, int spaceNeed)
+        {
+            string spaceAndNum = $" {num}";
+            for (int i = spaceAndNum.Length; i < spaceNeed; i++)
+            {
+                spaceAndNum += " ";
+            }
+            return spaceAndNum;
+        }
+
+        static void ReadTable(char oneChar, char twoChar, int spaceNeed)
+        {
+            Console.Write(oneChar);
+
+            for (int i = 0; i < spaceNeed; i++)
+            {
+                Console.Write(twoChar);
+            }
+
+            Console.Write(oneChar);
+
+            for (int i = 0; i < spaceNeed; i++)
+            {
+                Console.Write(twoChar);
+            }
+
+            Console.WriteLine(oneChar);
+        }
+
+        static void ReadTable(char oneChar, string oneNum, string twoNum, int spaceNeed)
+        {
+            Console.Write(oneChar);
+
+            Console.Write(FindSpace(oneNum, spaceNeed));
+
+            Console.Write(oneChar);
+
+            Console.Write(FindSpace(twoNum, spaceNeed));
+
+            Console.WriteLine(oneChar);
+        }
+    }
 }
