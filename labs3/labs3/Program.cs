@@ -1,5 +1,4 @@
-﻿using labs3;
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 
@@ -14,19 +13,19 @@ namespace labs7
             // Console.WriteLine("Введите диапазон значений x, начиная с наименьшего ");
             // int minRange = Convert.ToInt32(Console.ReadLine());
 
-            int minRange = Convert.ToInt32(WriteAndRead.input[0]);
+            int minRange = Convert.ToInt32(input[0]);
             Console.WriteLine($"Наименьшое число диапазона :{minRange}");
 
             // Console.WriteLine("Теперь наибольшое");
             // int maxRange = Convert.ToInt32(Console.ReadLine());
 
-            int maxRange = Convert.ToInt32(WriteAndRead.input[1]);
+            int maxRange = Convert.ToInt32(input[1]);
             Console.WriteLine($"Наибольшое число диапазона :{maxRange}");
             
             //
             //
 
-            string formula = WriteAndRead.input[2];
+            string formula = input[2];
             Console.WriteLine($"Формула: {formula}");
 
             if (minRange > maxRange)
