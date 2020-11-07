@@ -1,4 +1,6 @@
-﻿using System;
+﻿using labs3;
+using System;
+using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace labs7
@@ -7,11 +9,25 @@ namespace labs7
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Введите диапазон значений x, начиная с наименьшего ");
-            int minRange = Convert.ToInt32(Console.ReadLine());
+            string[] input = File.ReadAllLines("input.txt");
 
-            Console.WriteLine("Теперь наибольшое");
-            int maxRange = Convert.ToInt32(Console.ReadLine());
+            // Console.WriteLine("Введите диапазон значений x, начиная с наименьшего ");
+            // int minRange = Convert.ToInt32(Console.ReadLine());
+
+            int minRange = Convert.ToInt32(WriteAndRead.input[0]);
+            Console.WriteLine($"Наименьшое число диапазона :{minRange}");
+
+            // Console.WriteLine("Теперь наибольшое");
+            // int maxRange = Convert.ToInt32(Console.ReadLine());
+
+            int maxRange = Convert.ToInt32(WriteAndRead.input[1]);
+            Console.WriteLine($"Наибольшое число диапазона :{maxRange}");
+            
+            //
+            //
+
+            string formula = WriteAndRead.input[2];
+            Console.WriteLine($"Формула: {formula}");
 
             if (minRange > maxRange)
             {
@@ -31,14 +47,28 @@ namespace labs7
 
         static void Read(int spaceNeed, int minRange, int maxRange)
         {
-            ReadTable('|', '-', spaceNeed);
-            ReadTable('|', "x", "y", spaceNeed);
+            string[] tabl = new string[(maxRange - minRange)*4];
+            int LinesInTxt = 0;
+
+            ReadTable('|', '-', spaceNeed, LinesInTxt, tabl);
+            LinesInTxt++; // сделать с этим что то
+            ReadTable('|', "x", "y", spaceNeed, LinesInTxt, tabl);
+            LinesInTxt++;
 
             for (int i = minRange; i <= maxRange; i++)
             {
-                ReadTable('|', '-', spaceNeed);
-                ReadTable('|', $"{i}", $"{i * i}", spaceNeed);
+                ReadTable('|', '-', spaceNeed, LinesInTxt, tabl);
+                LinesInTxt++;
+                ReadTable('|', $"{i}", $"{i * i}", spaceNeed, LinesInTxt, tabl);
+                LinesInTxt++;
             }
+
+            string tabls = "";
+            for (int i = 0; i < (maxRange - minRange) * 4; i++)
+            {
+                tabls += $"{tabl[i]}\n";
+            }
+            File.WriteAllText("output.txt", tabls);
 
         }
 
@@ -52,8 +82,21 @@ namespace labs7
             return spaceAndNum;
         }
 
-        static void ReadTable(char oneChar, char twoChar, int spaceNeed)
+        static void ReadTable(char oneChar, char twoChar, int spaceNeed, int LinesInTxt, string[] tabl)
         {
+            string line = "";
+
+            for (int i = 0; i < spaceNeed; i++)
+            {
+                line += twoChar;
+            }
+
+
+            tabl[LinesInTxt] = $"{oneChar}{line}{oneChar}{line}{oneChar}";
+            LinesInTxt++;
+            //{oneChar}{line}{oneChar}{line}{oneChar}
+
+
             Console.Write(oneChar);
 
             for (int i = 0; i < spaceNeed; i++)
@@ -69,9 +112,12 @@ namespace labs7
             }
 
             Console.WriteLine(oneChar);
+
+
+            
         }
 
-        static void ReadTable(char oneChar, string oneNum, string twoNum, int spaceNeed)
+        static void ReadTable(char oneChar, string oneNum, string twoNum, int spaceNeed, int LinesInTxt, string[] tabl) // убрать console write
         {
             Console.Write(oneChar);
 
@@ -82,6 +128,10 @@ namespace labs7
             Console.Write(FindSpace(twoNum, spaceNeed));
 
             Console.WriteLine(oneChar);
-        }
+
+            tabl[LinesInTxt] = $"{oneChar}{FindSpace(oneNum, spaceNeed)}{oneChar}{FindSpace(twoNum, spaceNeed)}{oneChar}";
+            LinesInTxt++;
+
+        }//opend all text
     }
 }
