@@ -7,7 +7,7 @@ namespace labs7
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Привет,это программа выводит табличку со значением функции y=x^2. \nВведите диапазон значений x, начиная с наименьшего ");
+            Console.WriteLine("Введите диапазон значений x, начиная с наименьшего ");
             int minRange = Convert.ToInt32(Console.ReadLine());
 
             Console.WriteLine("Теперь наибольшое");
