@@ -8,15 +8,15 @@ using System.Text.RegularExpressions;
 namespace labs7
 {
     public partial class Program
-    {
-        static void Main(string[] args)
-        {
-            string[] input = File.ReadAllLines("input.txt");
-
-            int minRange = Convert.ToInt32(input[0]);
-            Console.WriteLine($"Наименьшое число диапазона :{minRange}");
-
-            int maxRange = Convert.ToInt32(input[1]);
+    {                                                               //Сказ о том как нагнули студента за 1 неделю(Крик души)
+        static void Main(string[] args) // Код фигня, Человек (если его можно так назвать) рукожоп ,времени было мало(2 дня)
+        {                               // ГРЕБАННЫЕ СКОБКИ СЛОМАЛИ МНЕ МОЗГ, а прогу нагнули, после пары часов понел что да как, но времени уже не было мало
+            string[] input = File.ReadAllLines("input.txt"); //поэтому надеюсь хотя бы на 2 бала ибо я не спал все выходные, делал этого нехорешого поляка.  
+                                                             // Было б время был бы код , но так как существо которое пыталось создать этот код пыталось 
+            int minRange = Convert.ToInt32(input[0]);        // учило чертовы 94 билета до потери пульса (чтоб не сдавать их на сессии) и делала прогу по инфе 
+            Console.WriteLine($"Наименьшое число диапазона :{minRange}");//думая что потом оно просто объединит 2 проги и будет ОЧЕНЬ хороший код,но оно ошибалось!!!
+                                                                         //P.S Если что билиты не сдал,как и ОПЗ, но инфу сделал (вроде).
+            int maxRange = Convert.ToInt32(input[1]);                    
             Console.WriteLine($"Наибольшое число диапазона :{maxRange}");
 
             string formula = input[2];
