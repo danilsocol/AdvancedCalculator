@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -31,19 +32,19 @@ namespace labs7
             Read(spaceNeed, minRange, maxRange, formula);
         }
 
-        static int FindSpaceMaxRange(string formula)   // для разных столбцов разное кол-во пробелов
+        static int FindSpaceMaxRange(string formula) 
         {
             string maxRandeFormula = $" {formula} ";
             return maxRandeFormula.Length;
         }
 
-        static void Read(int spaceNeed, int minRange, int maxRange,string formula)
+        static void Read(int spaceNeed, int minRange, int maxRange, string formula)
         {
-            string[] tabl = new string[(maxRange - minRange)*4];
+            string[] tabl = new string[(maxRange - minRange) * 4];
             int LinesInTxt = 0;
 
             ReadTable('|', '-', spaceNeed, LinesInTxt, tabl);
-            LinesInTxt++; // сделать с этим что то
+            LinesInTxt++;
             ReadTable('|', "x", $"{formula}", spaceNeed, LinesInTxt, tabl);
             LinesInTxt++;
 
@@ -51,19 +52,20 @@ namespace labs7
             {
                 ReadTable('|', '-', spaceNeed, LinesInTxt, tabl);
                 LinesInTxt++;
-                ReadTable('|', $"{i}", $"{ParseExpression(formula,i)}", spaceNeed, LinesInTxt, tabl);
+                ReadTable('|', $"{i}", $"{ParseExpression(formula, i)}", spaceNeed, LinesInTxt, tabl);
                 LinesInTxt++;
             }
 
-            string tabls = "";
+
+            StreamWriter output = new StreamWriter("E:\\Проекты\\Лабы\\labs3\\labs3\\File\\output.txt");
+
+
             for (int i = 0; i < (maxRange - minRange) * 4; i++)
             {
-                tabls += $"{tabl[i]}\n";
+                output.WriteLine($"{tabl[i]}");
             }
+            output.Close();
 
-            
-
-            File.WriteAllText("output.txt", tabls);
 
         }
 
@@ -109,12 +111,11 @@ namespace labs7
             Console.WriteLine(oneChar);
             //
 
-            
+
         }
 
-        static void ReadTable(char oneChar, string oneNum, string twoNum, int spaceNeed, int LinesInTxt, string[] tabl) // убрать console write
+        static void ReadTable(char oneChar, string oneNum, string twoNum, int spaceNeed, int LinesInTxt, string[] tabl)
         {
-
             // для вида
             Console.Write(oneChar);
 
@@ -132,48 +133,50 @@ namespace labs7
 
         }
 
-        static string ParseExpression(string formula,int num)
+        static string ParseExpression(string formula, int num)
         {
-            string example = formula.Replace("x",$"{num}");
+            string example = formula.Replace("x", $"{num}");
 
             example = DeleteSpace(example);
 
-            string[] str = Reworking(example);
+            List<string> str = new List<string>(Reworking(example));
+            //string[] str = Reworking(example);
 
             int quantityOfActions = CountingAction(str);
 
             int divisionMultiplication = checkDivisionMultiplication(str, quantityOfActions);
             int additionSubtraction = checkAdditionSubtraction(str, quantityOfActions);
 
-            string[] operationsLight = new string[additionSubtraction];
+            List<string> operationsLight = new List<string>();
             int numArrOperationsLight = 0;
 
-            string[] operationsHard = new string[divisionMultiplication];
+            List<string> operationsHard = new List<string>();
             int numArrOperationsHard = 0;
 
-            string[] nums =new string[str.Length -(divisionMultiplication + additionSubtraction)];
+            List<string> nums = new List<string>();
             int numArrNums = 0;
 
-            string[] arrRPN = new string[str.Length];
-            int numArrRPN = 0;
+            List<string> arrRPN = new List<string>();
+            
 
 
             // разбиение на цифры и операции
-            for (int i = 0; i<str.Length; i++)
+            for (int i = 0; i < str.Count; i++)
             {
                 if (OperationsHard(str, i))
                 {
-                    operationsHard[numArrOperationsHard] = str[i];
+                    operationsHard.Add(str[i]);
                     numArrOperationsHard++;
                 }
                 else if (OperationsLight(str, i))
                 {
-                    operationsLight[numArrOperationsLight] = str[i];
+                    operationsLight.Add(str[i]);
                     numArrOperationsLight++;
                 }
+               
                 else
                 {
-                    nums[numArrNums] = str[i];
+                    nums.Add(str[i]);
                     numArrNums++;
                 }
             }
@@ -181,78 +184,101 @@ namespace labs7
             numArrOperationsLight = 0;
             numArrOperationsHard = 0;
             numArrNums = 0;
+            //List<string> RPN= new List<string>();
 
-            arrRPN[numArrRPN] = nums[numArrNums];
-            arrRPN[numArrRPN + 1] = nums[numArrNums + 1];
-            numArrNums += 2;
-            numArrRPN += 2;
+            //RPN.Add(nums[0]);
 
-            for (int i = 2; i < arrRPN.Length; i++) // больше проверки (не всегда работает!)
+            tempory3(arrRPN, nums, numArrNums, operationsHard, numArrOperationsHard, operationsLight, numArrOperationsLight, str);
+
+
+            string RPN = "";
+            for (int i = 0; i < arrRPN.Count - 1; i++)
             {
+                RPN += Convert.ToString($"{arrRPN[i]},");
+            }
+            RPN += Convert.ToString($"{arrRPN[arrRPN.Count - 1]}");
 
-                if(OperationsHard(str, i))
+            return RPN;
+        }
+
+        static void tempory3(List<string> arrRPN, List<string> nums, int numArrNums, List<string> operationsHard, int numArrOperationsHard, List<string> operationsLight,int numArrOperationsLight, List<string> str)
+        {
+            for (int i = 1; i < nums.Count + operationsLight.Count + operationsHard.Count; i += 2)
+            {
+                
+                if (arrRPN.Count == 0)
                 {
-                    arrRPN[numArrRPN] = operationsHard[numArrOperationsHard];
+                    arrRPN.Add(nums[numArrNums]);
+                    numArrNums++;
+                }
+
+                if (arrRPN.Count == nums.Count + operationsLight.Count + operationsHard.Count)
+                    break;
+
+                if (OperationsHard(str, i))
+                {
+                    tempory1(arrRPN, nums, numArrNums, operationsHard, numArrOperationsHard);
+                    numArrNums++;
                     numArrOperationsHard++;
-                    numArrRPN ++;
-                }
-                else if (OperationsLight(str, i))
-                {
-                    //RPN[numArrRPN] = nums[numArrNums];
-                    //numArrRPN++;
-                    //numArrNums++;
-
-                    arrRPN[numArrRPN] = operationsLight[numArrOperationsLight];
-                    numArrOperationsLight++;
-                    numArrRPN++;
-                }
-                else if(operationsHard.Length == numArrOperationsHard)
-                {
-                    arrRPN[numArrRPN] = operationsLight[numArrOperationsLight];
-                    numArrOperationsLight++;
-                    numArrRPN++;
                 }
                 else
                 {
-                    arrRPN[numArrRPN] = nums[numArrNums];
-                    numArrRPN++;
+                    arrRPN.Add(nums[numArrNums]);
                     numArrNums++;
 
-                    //RPN[numArrRPN] = operationsLight[numArrOperationsLight];
-                    //numArrOperationsLight++;
-                    //numArrRPN++;
+                    if (i < nums.Count + operationsLight.Count + operationsHard.Count - 2)
+                        if (OperationsHard(str, i + 2))
+                        {
+                            i += 2;
+                            tempory2(arrRPN, nums, numArrNums, operationsHard, numArrOperationsHard, str, i, operationsLight);
+                            numArrNums++;
+                            numArrOperationsHard++;
+                        }
+
+                    arrRPN.Add(operationsLight[numArrOperationsLight]);
+                    numArrOperationsLight++;
                 }
-
             }
-            string RPN = "";
-            for(int i =0;i<arrRPN.Length-1;i++)
+        }
+        static void tempory1(List<string> arrRPN, List<string> nums, int numArrNums, List<string> operationsHard, int numArrOperationsHard)
+        {
+            arrRPN.Add(nums[numArrNums]);
+            numArrNums++;
+
+            arrRPN.Add(operationsHard[numArrOperationsHard]);
+            numArrOperationsHard++;
+        }
+
+        static void tempory2(List<string> arrRPN, List<string> nums, int numArrNums, List<string> operationsHard, int numArrOperationsHard, List<string> str, int i, List<string> operationsLight)
+        {
+
+            arrRPN.Add(nums[numArrNums]);
+            numArrNums++;
+
+            arrRPN.Add(operationsHard[numArrOperationsHard]);
+            numArrOperationsHard++;
+
+            if (i + 2 < nums.Count + operationsLight.Count + operationsHard.Count && OperationsHard(str, i + 2))
             {
-                RPN += $"{arrRPN[i]},";
+                i += 2;
+                tempory2(arrRPN, nums, numArrNums, operationsHard, numArrOperationsHard, str, i, operationsLight);
+                numArrNums++;
+                numArrOperationsHard++;
             }
-            RPN += $"{arrRPN[arrRPN.Length-1]}";
-
-            return RPN;
 
         }
 
-        static bool OperationsHard(string[] str, int i)
+        static bool OperationsHard(List<string> str, int i)
         {
             return str[i] == "*" || str[i] == "/";
+
         }
-
-
-        static bool OperationsLight(string[] str, int i)
+        static bool OperationsLight(List<string> str, int i)
         {
             return str[i] == "+" || str[i] == "-";
         }
-        
 
-        //static bool NoOperations(string[] str, int i)
-        //{
-        //    return str[i] != "+" || str[i] != "-" || str[i] != "*" || str[i] != "/";
-        //}
-
-        static int checkDivisionMultiplication(string[] str, int quantityOfActions)
+        static int checkDivisionMultiplication(List<string> str, int quantityOfActions)
         {
             int correctActions = 0;
 
@@ -263,7 +289,7 @@ namespace labs7
             }
             return correctActions;
         }
-        static int checkAdditionSubtraction(string[] str, int quantityOfActions)
+        static int checkAdditionSubtraction(List<string> str, int quantityOfActions)
         {
 
             int correctActions = 0;
@@ -286,16 +312,16 @@ namespace labs7
             return example.Split(new char[] { ' ' });
         }
 
-        static int CountingAction(string[] str)
+        static int CountingAction(List<string> str)
         {
             int quantityOfNumbers = 0;
 
-            for (int i = 0; i < str.Length; i++)
+            for (int i = 0; i < str.Count; i++)
             {
                 if (i % 2 == 0)
                     quantityOfNumbers++;
             }
-            return str.Length - quantityOfNumbers;
+            return str.Count - quantityOfNumbers;
         }
 
     }
