@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace labs7
 {
-    class Program
+    public partial class Program
     {
         static void Main(string[] args)
         {
@@ -27,6 +27,7 @@ namespace labs7
                 Console.WriteLine("неправильно введен диапазон ");
                 return;
             }
+
             int spaceNeed = FindSpaceMaxRange(formula);
 
             Read(spaceNeed, minRange, maxRange, formula);
@@ -34,41 +35,37 @@ namespace labs7
 
         static int FindSpaceMaxRange(string formula) 
         {
-            string maxRandeFormula = $" {formula} ";
-            return maxRandeFormula.Length;
+            string maxRangeFormula = $" {formula} ";
+            return maxRangeFormula.Length;
         }
 
         static void Read(int spaceNeed, int minRange, int maxRange, string formula)
         {
             string[] tabl = new string[(maxRange - minRange) * 4];
-            int LinesInTxt = 0;
+            int linesInTxt = 0;
 
-            ReadTable('|', '-', spaceNeed, LinesInTxt, tabl);
-            LinesInTxt++;
-            ReadTable('|', "x", $"{formula}", spaceNeed, LinesInTxt, tabl);
-            LinesInTxt++;
+            ReadTable('|', '-', spaceNeed, linesInTxt, tabl);
+            linesInTxt++;
+            ReadTable('|', "x", "ОПЗ", spaceNeed, linesInTxt, tabl);
+            linesInTxt++;
 
             for (int i = minRange; i <= maxRange; i++)
             {
-                ReadTable('|', '-', spaceNeed, LinesInTxt, tabl);
-                LinesInTxt++;
-                ReadTable('|', $"{i}", $"{ParseExpression(formula, i)}", spaceNeed, LinesInTxt, tabl);
-                LinesInTxt++;
+                ReadTable('|', '-', spaceNeed, linesInTxt, tabl);
+                linesInTxt++;
+                ReadTable('|', $"{i}",ParseExpression(formula, i), spaceNeed, linesInTxt, tabl);
+                linesInTxt++;
             }
 
-
             StreamWriter output = new StreamWriter("E:\\Проекты\\Лабы\\labs3\\labs3\\File\\output.txt");
-
 
             for (int i = 0; i < (maxRange - minRange) * 4; i++)
             {
                 output.WriteLine($"{tabl[i]}");
             }
             output.Close();
-
-
         }
-
+      
         static string FindSpace(string num, int spaceNeed)
         {
             string spaceAndNum = $" {num}";
@@ -88,49 +85,12 @@ namespace labs7
                 line += twoChar;
             }
 
-
             tabl[LinesInTxt] = $"{oneChar}{line}{oneChar}{line}{oneChar}";
-            LinesInTxt++;
-
-
-            // для вида
-            Console.Write(oneChar);
-
-            for (int i = 0; i < spaceNeed; i++)
-            {
-                Console.Write(twoChar);
-            }
-
-            Console.Write(oneChar);
-
-            for (int i = 0; i < spaceNeed; i++)
-            {
-                Console.Write(twoChar);
-            }
-
-            Console.WriteLine(oneChar);
-            //
-
-
         }
 
         static void ReadTable(char oneChar, string oneNum, string twoNum, int spaceNeed, int LinesInTxt, string[] tabl)
         {
-            // для вида
-            Console.Write(oneChar);
-
-            Console.Write(FindSpace(oneNum, spaceNeed));
-
-            Console.Write(oneChar);
-
-            Console.Write(FindSpace(twoNum, spaceNeed));
-
-            Console.WriteLine(oneChar);
-            //
-
             tabl[LinesInTxt] = $"{oneChar}{FindSpace(oneNum, spaceNeed)}{oneChar}{FindSpace(twoNum, spaceNeed)}{oneChar}";
-            LinesInTxt++;
-
         }
 
         static string ParseExpression(string formula, int num)
@@ -140,7 +100,6 @@ namespace labs7
             example = DeleteSpace(example);
 
             List<string> str = new List<string>(Reworking(example));
-            //string[] str = Reworking(example);
 
             int quantityOfActions = CountingAction(str);
 
@@ -157,8 +116,6 @@ namespace labs7
             int numArrNums = 0;
 
             List<string> arrRPN = new List<string>();
-            
-
 
             // разбиение на цифры и операции
             for (int i = 0; i < str.Count; i++)
@@ -184,11 +141,8 @@ namespace labs7
             numArrOperationsLight = 0;
             numArrOperationsHard = 0;
             numArrNums = 0;
-            //List<string> RPN= new List<string>();
 
-            //RPN.Add(nums[0]);
-
-            tempory3(arrRPN, nums, numArrNums, operationsHard, numArrOperationsHard, operationsLight, numArrOperationsLight, str);
+            CreatedRPN(arrRPN, nums, numArrNums, operationsHard, numArrOperationsHard, operationsLight, numArrOperationsLight, str);
 
 
             string RPN = "";
@@ -201,7 +155,7 @@ namespace labs7
             return RPN;
         }
 
-        static void tempory3(List<string> arrRPN, List<string> nums, int numArrNums, List<string> operationsHard, int numArrOperationsHard, List<string> operationsLight,int numArrOperationsLight, List<string> str)
+        static void CreatedRPN(List<string> arrRPN, List<string> nums, int numArrNums, List<string> operationsHard, int numArrOperationsHard, List<string> operationsLight,int numArrOperationsLight, List<string> str)
         {
             for (int i = 1; i < nums.Count + operationsLight.Count + operationsHard.Count; i += 2)
             {
@@ -217,7 +171,7 @@ namespace labs7
 
                 if (OperationsHard(str, i))
                 {
-                    tempory1(arrRPN, nums, numArrNums, operationsHard, numArrOperationsHard);
+                    RPNHardOperation(arrRPN, nums, numArrNums, operationsHard, numArrOperationsHard);
                     numArrNums++;
                     numArrOperationsHard++;
                 }
@@ -230,7 +184,7 @@ namespace labs7
                         if (OperationsHard(str, i + 2))
                         {
                             i += 2;
-                            tempory2(arrRPN, nums, numArrNums, operationsHard, numArrOperationsHard, str, i, operationsLight);
+                            RPNHardAndLightOperation(arrRPN, nums, numArrNums, operationsHard, numArrOperationsHard, str, i, operationsLight);
                             numArrNums++;
                             numArrOperationsHard++;
                         }
@@ -240,18 +194,14 @@ namespace labs7
                 }
             }
         }
-        static void tempory1(List<string> arrRPN, List<string> nums, int numArrNums, List<string> operationsHard, int numArrOperationsHard)
+        static void RPNHardOperation(List<string> arrRPN, List<string> nums, int numArrNums, List<string> operationsHard, int numArrOperationsHard)
         {
             arrRPN.Add(nums[numArrNums]);
-            numArrNums++;
-
             arrRPN.Add(operationsHard[numArrOperationsHard]);
-            numArrOperationsHard++;
         }
 
-        static void tempory2(List<string> arrRPN, List<string> nums, int numArrNums, List<string> operationsHard, int numArrOperationsHard, List<string> str, int i, List<string> operationsLight)
+        static void RPNHardAndLightOperation(List<string> arrRPN, List<string> nums, int numArrNums, List<string> operationsHard, int numArrOperationsHard, List<string> str, int i, List<string> operationsLight)
         {
-
             arrRPN.Add(nums[numArrNums]);
             numArrNums++;
 
@@ -261,17 +211,13 @@ namespace labs7
             if (i + 2 < nums.Count + operationsLight.Count + operationsHard.Count && OperationsHard(str, i + 2))
             {
                 i += 2;
-                tempory2(arrRPN, nums, numArrNums, operationsHard, numArrOperationsHard, str, i, operationsLight);
-                numArrNums++;
-                numArrOperationsHard++;
+                RPNHardAndLightOperation(arrRPN, nums, numArrNums, operationsHard, numArrOperationsHard, str, i, operationsLight);
             }
-
         }
 
         static bool OperationsHard(List<string> str, int i)
         {
             return str[i] == "*" || str[i] == "/";
-
         }
         static bool OperationsLight(List<string> str, int i)
         {
@@ -291,7 +237,6 @@ namespace labs7
         }
         static int checkAdditionSubtraction(List<string> str, int quantityOfActions)
         {
-
             int correctActions = 0;
 
             for (int i = 1; i < quantityOfActions * 2; i += 2)
